@@ -5,22 +5,25 @@ import { images } from '../../constants';
 import SearchInput from '@/components/SearchInput';
 import Trending from '@/components/Trending';
 import EmptyState from '@/components/EmptyState';
+import { getAllPosts } from '@/lib/appwrite';
+import useAppwrite from '@/lib/useAppwrite';
 
 const Home = () => {
+  const { data: posts, refetch } = useAppwrite(getAllPosts);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // fetch videos list.
+
+    await refetch();
+
     setRefreshing(false);
   };
 
   return (
     <SafeAreaView className='bg-primary h-full'>
-      <FlatList data={[
-        // { $id: 1 }, { $id: 2 }, { $id: 3 },{ $id: 4 },{ $id: 5 },{ $id: 6 }
-      ]} keyExtractor={(item: any) => item.$id} renderItem={({ item }: any) => (
-        <Text className='text-3xl text-white'>{item.$id}</Text>
+      <FlatList data={posts} keyExtractor={(item: any) => item.$id} renderItem={({ item }: any) => (
+        <Text className='text-3xl text-white'>{item.title}</Text>
       )} ListHeaderComponent={() => (
         <View className='my-6 px-4 space-y-6'>
           <View className='mb-6 flex-row items-start justify-between'>
