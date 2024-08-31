@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../constants';
 import CustomButton from '@/components/CustomButton';
+import 'react-native-url-polyfill/auto';
 
 export default function App() {
   return (
