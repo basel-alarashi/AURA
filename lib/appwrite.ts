@@ -1,4 +1,4 @@
-import { Account, Avatars, Client, Databases, ID } from 'react-native-appwrite';
+import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
 
 export const config = {
     platform: 'com.brn.aura',
@@ -43,11 +43,32 @@ export const createUser = async (email: string, password: string, username: stri
 };
 
 // Log In User
-const signIn = async (email: string, password: string) => {
+export const signIn = async (email: string, password: string) => {
     try {
         const session = await account.createEmailPasswordSession(email, password);
         return session;
     } catch (error: any) {
+        throw new Error(error);
+    }
+};
+
+export const getCurrentUser = async () => {
+    try {
+        const currentAccount = await account.get();
+
+        if (!currentAccount) throw Error('There is no logged in user.');
+
+        const currentUser = await databases.listDocuments(
+            config.databaseId,
+            config.userCollectionId,
+            [Query.equal('accountId', currentAccount.$id)]
+        );
+
+        if (!currentUser) throw Error('Error in fetching user information.');
+
+        return currentUser.documents[0];
+    } catch (error: any) {
+        console.log(error);
         throw new Error(error);
     }
 };
