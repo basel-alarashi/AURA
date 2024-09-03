@@ -1,0 +1,36 @@
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { icons } from '@/constants';
+
+const VideoCard = ({ video: {
+    title, thumbnail, video_link, creator: { username, avatar }
+}}: any) => {
+  const [play, setPlay] = useState(false);
+
+  return (
+    <View className='px-4 mb-14 flex-col items-center'>
+      <View className='flex-row items-start gap-3'>
+        <View className='flex-row flex-1 items-center justify-center'>
+          <View className='w-[46px] h-[46px] p-0.5 items-center justify-center border border-secondary rounded-lg'>
+            <Image source={{ uri: avatar }} className='w-full h-full rounded-lg' resizeMode='cover' />
+          </View>
+          <View className='flex-1 justify-center gap-y-1 ml-3'>
+            <Text className='text-white font-psemibold text-sm' numberOfLines={1}>{title}</Text>
+            <Text className='text-xs font-pregular text-gray-100' numberOfLines={1}>{username}</Text>
+          </View>
+        </View>
+        <View className='pt-2'>
+          <Image source={icons.menu} resizeMode='contain' className='w-5 h-5' />
+        </View>
+      </View>
+      {play? <Text className='text-white'>Playing</Text>: <TouchableOpacity
+        className='w-full h-60 rounded-xl mt-3 relative items-center justify-center'
+        activeOpacity={.7} onPress={() => setPlay(true)}>
+        <Image source={{ uri: thumbnail }} resizeMode='cover' className='w-full h-full mt-3 rounded-xl' />
+        <Image source={icons.play} resizeMode='contain' className='absolute w-12 h-12 ' />
+      </TouchableOpacity>}
+    </View>
+  );
+};
+
+export default VideoCard;
