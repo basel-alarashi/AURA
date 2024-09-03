@@ -99,3 +99,18 @@ export const getLatestPosts = async () => {
         throw new Error(error);
     }
 };
+
+export const searchPosts = async (query: string) => {
+    try {
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+            [Query.search('title', query)]
+        );
+
+        return posts.documents;
+    } catch (error: any) {
+        console.log(error);
+        throw new Error(error);
+    }
+};
