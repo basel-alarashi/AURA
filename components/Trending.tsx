@@ -21,6 +21,13 @@ const TrendingItem = ({ item, activeItem }: any) => {
     <Animatable.View className='mr-5' duration={400}
       animation={activeItem === item.$id ? zoomIn: zoomOut}>
         {play ?
+        <Video source={{ uri: item.video_link }} resizeMode={ResizeMode.CONTAIN}
+          className='w-52 h-72 mt-3 rounded-[35px] bg-white/10'
+          useNativeControls shouldPlay onPlaybackStatusUpdate={(status: any) => {
+            if (status.didJustFinish) {
+              setPlay(false);
+            }
+          }} /> :
         <TouchableOpacity className='relative items-center justify-center'
           activeOpacity={.7} onPress={() => setPlay(true)}>
           <ImageBackground source={{ uri: item.thumbnail }} resizeMode='cover'
