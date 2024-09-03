@@ -7,6 +7,7 @@ import Trending from '@/components/Trending';
 import EmptyState from '@/components/EmptyState';
 import { getAllPosts } from '@/lib/appwrite';
 import useAppwrite from '@/lib/useAppwrite';
+import VideoCard from '@/components/VideoCard';
 
 const Home = () => {
   const { data: posts, refetch } = useAppwrite(getAllPosts);
@@ -23,7 +24,7 @@ const Home = () => {
   return (
     <SafeAreaView className='bg-primary h-full'>
       <FlatList data={posts} keyExtractor={(item: any) => item.$id} renderItem={({ item }: any) => (
-        <Text className='text-3xl text-white'>{item.title}</Text>
+        <VideoCard video={item} />
       )} ListHeaderComponent={() => (
         <View className='my-6 px-4 space-y-6'>
           <View className='mb-6 flex-row items-start justify-between'>
