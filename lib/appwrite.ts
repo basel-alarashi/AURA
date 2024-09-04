@@ -100,12 +100,12 @@ export const getLatestPosts = async () => {
     }
 };
 
-export const searchPosts = async (query: string) => {
+export const searchPosts = async (query: any) => {
     try {
         const posts = await databases.listDocuments(
             config.databaseId,
             config.videoCollectionId,
-            [Query.search('title', query)]
+            [Query.contains('title', query)]
         );
 
         return posts.documents;
