@@ -128,3 +128,14 @@ export const getUserPosts = async (userId: any) => {
         throw new Error(error);
     }
 };
+
+export const signOut = async () => {
+    try {
+        const session = await account.deleteSession('current');
+
+        return session;
+    } catch (error: any) {
+        console.log(error);
+        throw new Error(error);
+    }
+};
