@@ -1,4 +1,4 @@
-import { Image, Text, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import { Image, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 import React, { useState } from 'react';
 import * as Animatable from 'react-native-animatable';
 import { icons } from '@/constants';
