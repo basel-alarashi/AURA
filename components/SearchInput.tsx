@@ -4,9 +4,9 @@ import { TextInput } from 'react-native';
 import { icons } from '../constants';
 import { router, usePathname } from 'expo-router';
 
-const SearchInput = () => {
+const SearchInput = ({ value }: any) => {
     const pathname = usePathname();
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(value || '');
 
     return (
         <View className='w-full h-16 relative'>
