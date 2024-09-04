@@ -19,7 +19,7 @@ const account = new Account(client);
 const avatars = new Avatars(client);
 const databases = new Databases(client);
 
-// Register User
+
 export const createUser = async (email: string, password: string, username: string) => {
     try {
         const newAccount = await account.create(ID.unique(), email, password, username);
@@ -43,7 +43,6 @@ export const createUser = async (email: string, password: string, username: stri
     }
 };
 
-// Log In User
 export const signIn = async (email: string, password: string) => {
     try {
         const session = await account.createEmailPasswordSession(email, password);
@@ -106,6 +105,21 @@ export const searchPosts = async (query: any) => {
             config.databaseId,
             config.videoCollectionId,
             [Query.contains('title', query)]
+        );
+
+        return posts.documents;
+    } catch (error: any) {
+        console.log(error);
+        throw new Error(error);
+    }
+};
+
+export const getUserPosts = async (userId: any) => {
+    try {
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+            [Query.equal('creator', userId)]
         );
 
         return posts.documents;
