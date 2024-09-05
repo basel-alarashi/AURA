@@ -1,4 +1,4 @@
-import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
+import { Account, Avatars, Client, Databases, ID, Query, QueryTypes, Storage } from 'react-native-appwrite';
 
 export const config = {
     platform: 'com.brn.aura',
@@ -18,6 +18,7 @@ client.setEndpoint(config.endpoint).setProject(config.projectId).setPlatform(con
 const account = new Account(client);
 const avatars = new Avatars(client);
 const databases = new Databases(client);
+const storage = new Storage(client);
 
 
 export const createUser = async (email: string, password: string, username: string) => {
@@ -114,7 +115,7 @@ export const searchPosts = async (query: any) => {
     }
 };
 
-export const getUserPosts = async (userId: any) => {
+export const getUserPosts = async (userId: QueryTypes) => {
     try {
         const posts = await databases.listDocuments(
             config.databaseId,
@@ -137,5 +138,58 @@ export const signOut = async () => {
     } catch (error: any) {
         console.log(error);
         throw new Error(error);
+    }
+};
+
+const getFilePreview = async (fileId: string, type: string) => {
+    try {
+        const fileURL = type === 'video'
+            ? storage.getFileView(config.videosStorageId, fileId)
+            : type === 'image'
+                ? storage.getFilePreview(config.thumbsStorageId, fileId)
+                : null;
+        if (!fileURL) throw new Error('Invalid file type');
+        return fileURL;
+    } catch (error: any) {
+        throw new Error('[Get File URL ' + type + ']: ' + error.message);
+    }
+};
+
+const uploadFile = async (file: any, type: string) => {
+    if (!file) return;
+
+    const { mimeType, ...rest } = file;
+    const asset = { type: mimeType, ...rest };
+
+    try {
+        const uploadedFile = await storage.createFile(
+            type === 'video' ? config.videosStorageId : config.thumbsStorageId,
+            ID.unique(),
+            asset
+        );
+        const fileURL = await getFilePreview(uploadedFile.$id, type);
+        return fileURL;
+    } catch (error: any) {
+        throw new Error('[Upload File ' + type + ']: ' + error.message);
+    }
+};
+
+export const createVideo = async (form: any) => {
+    try {
+        const [thumbnailURL, videoURL] = await Promise.all([
+            uploadFile(form.thumbnail, 'image'),
+            uploadFile(form.video, 'video')
+        ]);
+
+        const newPost = await databases.createDocument(
+            config.databaseId,
+            config.videoCollectionId,
+            ID.unique(),
+            { title: form.title, prompt: form.prompt, thumbnail: thumbnailURL,
+                video_link: videoURL, creator: form.userId }
+        );
+        return newPost;
+    } catch (error: any) {
+        throw new Error('[Create Video]: ' + error.message);
     }
 };
