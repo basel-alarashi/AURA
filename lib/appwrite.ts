@@ -76,7 +76,11 @@ export const getCurrentUser = async () => {
 
 export const getAllPosts = async () => {
     try {
-        const posts = await databases.listDocuments(config.databaseId, config.videoCollectionId);
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+            [Query.orderDesc('$createdAt')]
+        );
 
         return posts.documents;
     } catch (error: any) {
@@ -105,7 +109,7 @@ export const searchPosts = async (query: any) => {
         const posts = await databases.listDocuments(
             config.databaseId,
             config.videoCollectionId,
-            [Query.contains('title', query)]
+            [Query.contains('title', query), Query.orderDesc('$createdAt')]
         );
 
         return posts.documents;
@@ -120,7 +124,7 @@ export const getUserPosts = async (userId: QueryTypes) => {
         const posts = await databases.listDocuments(
             config.databaseId,
             config.videoCollectionId,
-            [Query.equal('creator', userId)]
+            [Query.equal('creator', userId), Query.orderDesc('$createdAt')]
         );
 
         return posts.documents;
@@ -158,8 +162,17 @@ const getFilePreview = async (fileId: string, type: string) => {
 const uploadFile = async (file: any, type: string) => {
     if (!file) return;
 
-    const { mimeType, ...rest } = file;
-    const asset = { type: mimeType, ...rest };
+    /* UPLOAD FROM FILE EXPLORER */
+    // const { mimeType, ...rest } = file;
+    // const asset = { type: mimeType, ...rest };
+
+    /* UPLOAD FROM GALLERY */
+    const asset = {
+        name: file.fileName,
+        size: file.fileSize,
+        type: file.mimeType,
+        uri: file.uri
+    };
 
     try {
         const uploadedFile = await storage.createFile(
