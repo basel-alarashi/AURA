@@ -1,8 +1,8 @@
-import { View, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EmptyState from '@/components/EmptyState';
-import { getUserPosts, signOut } from '@/lib/appwrite';
+import { getUserPosts, signOut, likeVideo, getCurrentUser } from '@/lib/appwrite';
 import useAppwrite from '@/lib/useAppwrite';
 import VideoCard from '@/components/VideoCard';
 import { useGlobalContext } from '@/context/GlobalProvider';
@@ -12,7 +12,7 @@ import { router } from 'expo-router';
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn }: any = useGlobalContext();
-  const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
+  const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
 
   const logout = async () => {
     await signOut();
@@ -21,10 +21,32 @@ const Profile = () => {
     router.replace('/(auth)/sign-in');
   };
 
+  const likeDislikeVideo = async (video: any, liked: boolean) => {
+    try {
+      const newLikers = liked ? video.likers?.filter((liker: any) => liker.$id !== user.$id)
+        : [...video.likers, user];
+
+      const result = await likeVideo({ ...video, likers: newLikers });
+      if (result) {
+        getCurrentUser().then(res => {
+          if (res) {
+            setUser(res);
+            refetch();
+            Alert.alert('Success', `Video ${liked ? 'un' : ''}saved successfully.`);
+          }
+        }).catch(error => Alert.alert('Refresh Session Error', error.message));
+      }
+    } catch (error: any) {
+      Alert.alert('Saving Video Error', error.message);
+    }
+  };
+
   return (
     <SafeAreaView className='bg-primary h-full'>
       <FlatList data={posts ?? []} keyExtractor={(item: any) => item.$id} renderItem={({ item }: any) => (
-        <VideoCard video={item} />
+        <VideoCard video={item} liked={
+          item.likers?.map((liker: any) => liker.$id)?.includes(user.$id)}
+          handleLikeDislike={(liked: boolean) => likeDislikeVideo(item, liked)} />
       )} ListHeaderComponent={() => (
         <View className='mt-6 mb-12 px-4 w-full items-center justify-center '>
           <TouchableOpacity className='items-end w-full mb-10' onPress={logout}>

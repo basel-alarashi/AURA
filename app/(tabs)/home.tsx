@@ -1,21 +1,41 @@
-import { View, Text, FlatList, Image, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Image, RefreshControl, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants';
 import SearchInput from '@/components/SearchInput';
 import Trending from '@/components/Trending';
 import EmptyState from '@/components/EmptyState';
-import { getAllPosts, getLatestPosts } from '@/lib/appwrite';
+import { getAllPosts, getLatestPosts, likeVideo, getCurrentUser } from '@/lib/appwrite';
 import useAppwrite from '@/lib/useAppwrite';
 import VideoCard from '@/components/VideoCard';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const Home = () => {
-  const { user }: any = useGlobalContext();
+  const { user, setUser }: any = useGlobalContext();
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
+
+  const likeDislikeVideo = async (video: any, liked: boolean) => {
+    try {
+      const newLikers = liked ? video.likers?.filter((liker: any) => liker.$id !== user.$id)
+        : [...video.likers, user];
+
+      const result = await likeVideo({ ...video, likers: newLikers });
+      if (result) {
+        getCurrentUser().then(res => {
+          if (res) {
+            setUser(res);
+            refetch();
+            Alert.alert('Success', `Video ${liked ? 'un' : ''}saved successfully.`);
+          }
+        }).catch(error => Alert.alert('Refresh Session Error', error.message));
+      }
+    } catch (error: any) {
+      Alert.alert('Saving Video Error', error.message);
+    }
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -28,7 +48,9 @@ const Home = () => {
   return (
     <SafeAreaView className='bg-primary h-full'>
       <FlatList data={posts ?? []} keyExtractor={(item: any) => item.$id} renderItem={({ item }: any) => (
-        <VideoCard video={item} />
+        <VideoCard video={item} liked={
+          item.likers?.map((liker: any) => liker.$id)?.includes(user.$id)}
+          handleLikeDislike={(liked: boolean) => likeDislikeVideo(item, liked)} />
       )} ListHeaderComponent={() => (
         <View className='my-6 px-4 space-y-6'>
           <View className='mb-6 flex-row items-start justify-between'>
