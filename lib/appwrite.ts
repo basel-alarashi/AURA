@@ -206,3 +206,17 @@ export const createVideo = async (form: any) => {
         throw new Error('[Create Video]: ' + error.message);
     }
 };
+
+export const likeVideo = async (videoId: string, oldLikers: string[], userId: string) => {
+    try {
+        const result = await databases.updateDocument(
+            config.databaseId,
+            config.videoCollectionId,
+            videoId,
+            { likers: [...oldLikers, userId] }
+        );
+        return result;
+    } catch (error: any) {
+        throw new Error(error);
+    }
+};
