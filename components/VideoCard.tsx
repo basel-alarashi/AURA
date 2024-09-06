@@ -5,7 +5,7 @@ import { Video, ResizeMode } from 'expo-av';
 
 const VideoCard = ({ video: {
   title, thumbnail, video_link, creator: { username, avatar }
-}, liked, handleLikeDislike }: any) => {
+}, liked, handleLikeDislike, page }: any) => {
   const [play, setPlay] = useState<boolean>(false);
 
   return (
@@ -20,9 +20,10 @@ const VideoCard = ({ video: {
             <Text className='text-xs font-pregular text-gray-100' numberOfLines={1}>{username}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={handleLikeDislike} className='pt-2'>
+        {page !== 'bookmark' &&
+        <TouchableOpacity onPress={() => handleLikeDislike(liked)} className='pt-2'>
           <Image source={liked ? icons.liked : icons.unliked} resizeMode='contain' className='w-5 h-5' />
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
       {play ?
         <Video source={{ uri: video_link }} resizeMode={ResizeMode.CONTAIN}
