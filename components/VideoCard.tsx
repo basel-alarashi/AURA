@@ -7,6 +7,7 @@ const VideoCard = ({ video: {
     title, thumbnail, video_link, creator: { username, avatar }
 }}: any) => {
   const [play, setPlay] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   return (
     <View className='px-4 mb-14 flex-col items-center'>
@@ -20,9 +21,9 @@ const VideoCard = ({ video: {
             <Text className='text-xs font-pregular text-gray-100' numberOfLines={1}>{username}</Text>
           </View>
         </View>
-        <View className='pt-2'>
-          <Image source={icons.menu} resizeMode='contain' className='w-5 h-5' />
-        </View>
+        <TouchableOpacity onPress={() => setLiked(prev => !prev)} className='pt-2'>
+          <Image source={liked ? icons.liked : icons.unliked} resizeMode='contain' className='w-5 h-5' />
+        </TouchableOpacity>
       </View>
       {play ?
       <Video source={{ uri: video_link }} resizeMode={ResizeMode.CONTAIN}
