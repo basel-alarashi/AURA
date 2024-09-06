@@ -35,7 +35,7 @@ const Profile = () => {
           </View>
           <View className='mt-5 flex-row '>
             <InfoBox title={posts?.length || 0} subtitle='Posts' containerStyle='mr-10' />
-            <InfoBox title='1.2K' subtitle='Followers' />
+            <InfoBox title={user?.liked_posts?.length} subtitle='Likes' />
           </View>
         </View>
       )} ListEmptyComponent={() => (
