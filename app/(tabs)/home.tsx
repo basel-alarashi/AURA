@@ -40,7 +40,7 @@ const Home = () => {
               <Image source={images.logoSmall} className='w-9 h-10' resizeMode='contain' />
             </View>
           </View>
-          <SearchInput />
+          <SearchInput placeholder='Search for a video topic' />
           <View className='w-full flex-1 pt-5 pb-8'>
             <Text className='text-gray-100 text-lg mb-3 font-pregular'>Latest Videos</Text>
             <Trending posts={latestPosts ?? []} />

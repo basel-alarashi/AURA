@@ -25,7 +25,7 @@ const Search = () => {
           <Text className='text-sm text-gray-100 font-pmedium'>Search results for</Text>
           <Text className='text-2xl text-white font-psemibold'>{query}</Text>
           <View className='mt-6 mb-8'>
-            <SearchInput value={query} />
+            <SearchInput value={query} placeholder='Search for a video topic' />
           </View>
         </View>
       )} ListEmptyComponent={() => (
