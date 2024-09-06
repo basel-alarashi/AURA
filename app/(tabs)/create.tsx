@@ -48,7 +48,6 @@ const Create = () => {
 
 
   const submit = async () => {
-    console.log(form, user.$id);
     if (!form.title || form.title.length === 0 || !form.prompt
       || form.title.length === 0 || !form.video || !form.thumbnail)
       return Alert.alert('Please fill in all the fields');
@@ -56,13 +55,11 @@ const Create = () => {
     setUploading(true);
 
     try {
-      const result = await createVideo({ ...form, userId: user.$id });
-      console.log(result);
+      await createVideo({ ...form, userId: user.$id });
 
       Alert.alert('Success', 'Post uploaded seccessfully.');
       router.push('/home');
     } catch (error: any) {
-      console.log(error);
       Alert.alert('Error', error.message);
     } finally {
       setForm({

@@ -39,7 +39,6 @@ export const createUser = async (email: string, password: string, username: stri
         );
         return newUser;
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
@@ -69,7 +68,6 @@ export const getCurrentUser = async () => {
 
         return currentUser.documents[0];
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
@@ -84,7 +82,6 @@ export const getAllPosts = async () => {
 
         return posts.documents;
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
@@ -99,7 +96,6 @@ export const getLatestPosts = async () => {
 
         return posts.documents;
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
@@ -114,7 +110,6 @@ export const searchPosts = async (query: any) => {
 
         return posts.documents;
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
@@ -129,7 +124,6 @@ export const getUserPosts = async (userId: QueryTypes) => {
 
         return posts.documents;
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
@@ -140,7 +134,6 @@ export const signOut = async () => {
 
         return session;
     } catch (error: any) {
-        console.log(error);
         throw new Error(error);
     }
 };
