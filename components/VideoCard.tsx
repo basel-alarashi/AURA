@@ -1,13 +1,12 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { icons } from '@/constants';
 import { Video, ResizeMode } from 'expo-av';
 
 const VideoCard = ({ video: {
-    title, thumbnail, video_link, creator: { username, avatar }
-}}: any) => {
-  const [play, setPlay] = useState(false);
-  const [liked, setLiked] = useState(false);
+  title, thumbnail, video_link, creator: { username, avatar }
+}, liked, handleLikeDislike }: any) => {
+  const [play, setPlay] = useState<boolean>(false);
 
   return (
     <View className='px-4 mb-14 flex-col items-center'>
@@ -21,23 +20,23 @@ const VideoCard = ({ video: {
             <Text className='text-xs font-pregular text-gray-100' numberOfLines={1}>{username}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => setLiked(prev => !prev)} className='pt-2'>
+        <TouchableOpacity onPress={handleLikeDislike} className='pt-2'>
           <Image source={liked ? icons.liked : icons.unliked} resizeMode='contain' className='w-5 h-5' />
         </TouchableOpacity>
       </View>
       {play ?
-      <Video source={{ uri: video_link }} resizeMode={ResizeMode.CONTAIN}
-      className='w-full h-60 mt-3 rounded-xl'
-      useNativeControls shouldPlay onPlaybackStatusUpdate={(status: any) => {
-        if (status.didJustFinish) {
-          setPlay(false);
-        }
-      }} /> : <TouchableOpacity
-        className='w-full h-60 rounded-xl mt-3 relative items-center justify-center'
-        activeOpacity={.7} onPress={() => setPlay(true)}>
-        <Image source={{ uri: thumbnail }} resizeMode='cover' className='w-full h-full mt-3 rounded-xl' />
-        <Image source={icons.play} resizeMode='contain' className='absolute w-12 h-12 ' />
-      </TouchableOpacity>}
+        <Video source={{ uri: video_link }} resizeMode={ResizeMode.CONTAIN}
+          className='w-full h-60 mt-3 rounded-xl'
+          useNativeControls shouldPlay onPlaybackStatusUpdate={(status: any) => {
+            if (status.didJustFinish) {
+              setPlay(false);
+            }
+          }} /> : <TouchableOpacity
+            className='w-full h-60 rounded-xl mt-3 relative items-center justify-center'
+            activeOpacity={.7} onPress={() => setPlay(true)}>
+          <Image source={{ uri: thumbnail }} resizeMode='cover' className='w-full h-full mt-3 rounded-xl' />
+          <Image source={icons.play} resizeMode='contain' className='absolute w-12 h-12 ' />
+        </TouchableOpacity>}
     </View>
   );
 };
