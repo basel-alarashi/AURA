@@ -39,7 +39,7 @@ export const createUser = async (email: string, password: string, username: stri
         );
         return newUser;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[User Creation Error]: ' + error.message);
     }
 };
 
@@ -48,7 +48,7 @@ export const signIn = async (email: string, password: string) => {
         const session = await account.createEmailPasswordSession(email, password);
         return session;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Error Signing In]: ' + error.message);
     }
 };
 
@@ -68,7 +68,7 @@ export const getCurrentUser = async () => {
 
         return currentUser.documents[0];
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Error Getting User Details]: ' + error.message);
     }
 };
 
@@ -82,7 +82,7 @@ export const getAllPosts = async () => {
 
         return posts.documents;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Fetch All Error]: ' + error.message);
     }
 };
 
@@ -96,7 +96,7 @@ export const getLatestPosts = async () => {
 
         return posts.documents;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Fetch Latest Error]: ' + error.message);
     }
 };
 
@@ -110,7 +110,7 @@ export const searchPosts = async (query: any) => {
 
         return posts.documents;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Search Error]: ' + error.message);
     }
 };
 
@@ -124,7 +124,7 @@ export const getUserPosts = async (userId: QueryTypes) => {
 
         return posts.documents;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Error Fetching Your Posts]: ' + error.message);
     }
 };
 
@@ -134,7 +134,7 @@ export const signOut = async () => {
 
         return session;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Error Signing Out]: ' + error.message);
     }
 };
 
@@ -200,16 +200,16 @@ export const createVideo = async (form: any) => {
     }
 };
 
-export const likeVideo = async (videoId: string, newLikers: string[]) => {
+export const likeVideo = async (video: any) => {
     try {
         const result = await databases.updateDocument(
             config.databaseId,
             config.videoCollectionId,
-            videoId,
-            { likers: newLikers }
+            video.$id,
+            { title: video.title, thumbnail: video.thumbnail, video_link: video.video_link, likers: video.likers }
         );
         return result;
     } catch (error: any) {
-        throw new Error(error);
+        throw new Error('[Saving Video Error]: ' + error.message);
     }
 };
